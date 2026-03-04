@@ -1,29 +1,24 @@
-from fastapi import FastAPI, Request
-from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse
-import pandas as pd
-
+from flask import Flask, render_template, request
 from src.pipeline.predict_pipeline import CustomData, PredictPipeline
 
-app = FastAPI()
-
-templates = Jinja2Templates(directory="templates")
+app = Flask(__name__)
 
 
-@app.get("/", response_class=HTMLResponse)
-def home(request: Request):
-    return templates.TemplateResponse("home.html", {"request": request})
+@app.route('/', methods=['GET'])
+def home():
+    return render_template('home.html')
 
 
-@app.post("/predict", response_class=HTMLResponse)
-def predict(request: Request,
-            location: str,
-            temperature: float,
-            humidity: float,
-            wind_speed: float,
-            precipitation: float,
-            cloud_cover: float,
-            pressure: float):
+@app.route('/predict', methods=['POST'])
+def predict():
+
+    location = request.form.get('location')
+    temperature = float(request.form.get('temperature'))
+    humidity = float(request.form.get('humidity'))
+    wind_speed = float(request.form.get('wind_speed'))
+    precipitation = float(request.form.get('precipitation'))
+    cloud_cover = float(request.form.get('cloud_cover'))
+    pressure = float(request.form.get('pressure'))
 
     data = CustomData(
         location=location,
@@ -37,15 +32,16 @@ def predict(request: Request,
 
     pred_df = data.get_data_as_dataframe()
 
-    pipeline = PredictPipeline()
-    result = pipeline.predict(pred_df)
+    predict_pipeline = PredictPipeline()
+    result = predict_pipeline.predict(pred_df)
 
-    prediction = "Rain Expected" if result[0] == 1 else "No Rain"
+    prediction = "🌧 Rain Expected" if result[0] == 1 else "☀ No Rain Expected"
 
-    return templates.TemplateResponse(
-        "home.html",
-        {
-            "request": request,
-            "results": prediction
-        }
+    return render_template(
+        'home.html',
+        results=prediction
     )
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8080, debug=True)
