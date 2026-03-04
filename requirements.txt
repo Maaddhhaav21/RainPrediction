@@ -1,5 +1,7 @@
 pandas
 numpy
+catboost
+xgboost
 scikit-learn==1.7.2 
 flask
 seaborn
