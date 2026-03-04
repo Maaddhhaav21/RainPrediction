@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Extreme Rainfall Prediction</title>
+
+    <style>
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+        background: linear-gradient(135deg, #3a7bd5, #00d2ff);
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .container {
+        background: white;
+        padding: 40px;
+        border-radius: 12px;
+        width: 500px;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 25px;
+        color: #333;
+      }
+
+      label {
+        font-weight: bold;
+        margin-top: 10px;
+        display: block;
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        margin-bottom: 15px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+      }
+
+      button {
+        width: 100%;
+        padding: 12px;
+        background: #3a7bd5;
+        border: none;
+        border-radius: 6px;
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background: #1f5fbf;
+      }
+
+      .result {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+        background: #f4f4f4;
+      }
+
+      .footer {
+        text-align: center;
+        margin-top: 15px;
+        font-size: 12px;
+        color: #777;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>🌧 Extreme Rainfall Prediction</h1>
+
+      <form action="/" method="POST">
+        <label>Location</label>
+        <input
+          type="text"
+          name="location"
+          placeholder="Enter Location"
+          required
+        />
+
+        <label>Temperature (°C)</label>
+        <input type="number" step="any" name="temperature" required />
+
+        <label>Humidity (%)</label>
+        <input type="number" step="any" name="humidity" required />
+
+        <label>Wind Speed (km/h)</label>
+        <input type="number" step="any" name="wind_speed" required />
+
+        <label>Precipitation (mm)</label>
+        <input type="number" step="any" name="precipitation" required />
+
+        <label>Cloud Cover (%)</label>
+        <input type="number" step="any" name="cloud_cover" required />
+
+        <label>Pressure (hPa)</label>
+        <input type="number" step="any" name="pressure" required />
+
+        <button type="submit">Predict Rainfall</button>
+      </form>
+
+      {% if results %}
+
+      <div class="result">
+        Prediction Result:
+        <br /><br />
+
+        {% if results == 1 or results == "Rain Expected" %} 🌧 Rain Expected
+        Tomorrow {% else %} ☀ No Rain Expected {% endif %}
+      </div>
+
+      {% endif %}
+
+      <div class="footer">Machine Learning Rainfall Prediction System</div>
+    </div>
+  </body>
+</html>
