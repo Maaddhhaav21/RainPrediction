@@ -4,43 +4,42 @@ from src.pipeline.predict_pipeline import CustomData, PredictPipeline
 app = Flask(__name__)
 
 
-@app.route('/', methods=['GET'])
-def home():
-    return render_template('home.html')
+@app.route('/', methods=['GET', 'POST'])
+def predict_datapoint():
 
+    if request.method == 'GET':
+        return render_template('home.html')
 
-@app.route('/predict', methods=['POST'])
-def predict():
+    else:
+        location = request.form.get('location')
+        temperature = float(request.form.get('temperature'))
+        humidity = float(request.form.get('humidity'))
+        wind_speed = float(request.form.get('wind_speed'))
+        precipitation = float(request.form.get('precipitation'))
+        cloud_cover = float(request.form.get('cloud_cover'))
+        pressure = float(request.form.get('pressure'))
 
-    location = request.form.get('location')
-    temperature = float(request.form.get('temperature'))
-    humidity = float(request.form.get('humidity'))
-    wind_speed = float(request.form.get('wind_speed'))
-    precipitation = float(request.form.get('precipitation'))
-    cloud_cover = float(request.form.get('cloud_cover'))
-    pressure = float(request.form.get('pressure'))
+        data = CustomData(
+            location=location,
+            temperature=temperature,
+            humidity=humidity,
+            wind_speed=wind_speed,
+            precipitation=precipitation,
+            cloud_cover=cloud_cover,
+            pressure=pressure
+        )
 
-    data = CustomData(
-        location=location,
-        temperature=temperature,
-        humidity=humidity,
-        wind_speed=wind_speed,
-        precipitation=precipitation,
-        cloud_cover=cloud_cover,
-        pressure=pressure
-    )
+        pred_df = data.get_data_as_dataframe()
 
-    pred_df = data.get_data_as_dataframe()
+        predict_pipeline = PredictPipeline()
+        result = predict_pipeline.predict(pred_df)
 
-    predict_pipeline = PredictPipeline()
-    result = predict_pipeline.predict(pred_df)
+        prediction = "🌧 Rain Expected" if result[0] == 1 else "☀ No Rain Expected"
 
-    prediction = "🌧 Rain Expected" if result[0] == 1 else "☀ No Rain Expected"
-
-    return render_template(
-        'home.html',
-        results=prediction
-    )
+        return render_template(
+            'home.html',
+            results=prediction
+        )
 
 
 if __name__ == "__main__":
