@@ -16,7 +16,7 @@ from src.logger import logging
 
 @dataclass
 class DataTransformationConfig:
-    preprocessor_obj_file_path = os.path.join('artifacts', 'preprocessor.pkl')
+    preprocessor_obj_file_path = os.path.join("artifacts", "preprocessor.pkl")
 
 
 class DataTransformation:
@@ -27,6 +27,7 @@ class DataTransformation:
     def get_data_transformer_object(self):
 
         try:
+
             numerical_columns = [
                 "temperature",
                 "humidity",
@@ -36,9 +37,7 @@ class DataTransformation:
                 "pressure"
             ]
 
-            categorical_columns = [
-                "location"
-            ]
+            categorical_columns = ["location"]
 
             num_pipeline = Pipeline(
                 steps=[
@@ -50,12 +49,9 @@ class DataTransformation:
             cat_pipeline = Pipeline(
                 steps=[
                     ("imputer", SimpleImputer(strategy="most_frequent")),
-                    ("one_hot_encoder", OneHotEncoder(handle_unknown="ignore"))
+                    ("one_hot_encoder", OneHotEncoder(handle_unknown="ignore", sparse_output=False))
                 ]
             )
-
-            logging.info(f"Categorical columns: {categorical_columns}")
-            logging.info(f"Numerical columns: {numerical_columns}")
 
             preprocessor = ColumnTransformer(
                 transformers=[
@@ -65,6 +61,7 @@ class DataTransformation:
             )
 
             logging.info("Column transformer created successfully")
+
             return preprocessor
 
         except Exception as e:
@@ -73,28 +70,63 @@ class DataTransformation:
     def initiate_data_transformation(self, train_path, test_path):
 
         try:
+
             train_df = pd.read_csv(train_path)
             test_df = pd.read_csv(test_path)
 
-            logging.info("Train and test data loaded")
+            # normalize column names
+            train_df.columns = train_df.columns.str.lower().str.replace(" ", "_")
+            test_df.columns = test_df.columns.str.lower().str.replace(" ", "_")
+
+            # remove date column if exists
+            train_df.drop(columns=["date"], errors="ignore", inplace=True)
+            test_df.drop(columns=["date"], errors="ignore", inplace=True)
+
+            train_df["rain_tomorrow"] = train_df["rain_tomorrow"].astype(str).str.strip().str.lower()
+            test_df["rain_tomorrow"] = test_df["rain_tomorrow"].astype(str).str.strip().str.lower()
+
+            train_df["rain_tomorrow"] = train_df["rain_tomorrow"].replace({
+                "yes":1,
+                "no":0,
+                "1":1,
+                "0":0
+            })
+
+            test_df["rain_tomorrow"] = test_df["rain_tomorrow"].replace({
+                "yes":1,
+                "no":0,
+                "1":1,
+                "0":0
+            })
+
+            train_df.dropna(subset=["rain_tomorrow"], inplace=True)
+            test_df.dropna(subset=["rain_tomorrow"], inplace=True)
+
+            if train_df.empty or test_df.empty:
+                raise ValueError("Training or testing dataset became empty after cleaning")
+
+            logging.info("Data cleaning completed")
+
+            target_column = "rain_tomorrow"
+
+            X_train = train_df.drop(columns=[target_column])
+            y_train = train_df[target_column]
+
+            X_test = test_df.drop(columns=[target_column])
+            y_test = test_df[target_column]
 
             preprocessing_obj = self.get_data_transformer_object()
 
-            target_column_name = "rain_tomorrow"
+            logging.info("Applying preprocessing pipeline")
 
-            input_feature_train_df = train_df.drop(columns=[target_column_name])
-            target_feature_train_df = train_df[target_column_name]
+            X_train_arr = preprocessing_obj.fit_transform(X_train)
+            X_test_arr = preprocessing_obj.transform(X_test)
 
-            input_feature_test_df = test_df.drop(columns=[target_column_name])
-            target_feature_test_df = test_df[target_column_name]
+            y_train_arr = np.array(y_train).reshape(-1, 1)
+            y_test_arr = np.array(y_test).reshape(-1, 1)
 
-            logging.info("Applying preprocessing object")
-
-            input_feature_train_arr = preprocessing_obj.fit_transform(input_feature_train_df)
-            input_feature_test_arr = preprocessing_obj.transform(input_feature_test_df)
-
-            train_arr = np.c_[input_feature_train_arr, np.array(target_feature_train_df)]
-            test_arr = np.c_[input_feature_test_arr, np.array(target_feature_test_df)]
+            train_arr = np.hstack((X_train_arr, y_train_arr))
+            test_arr = np.hstack((X_test_arr, y_test_arr))
 
             save_object(
                 file_path=self.data_transformation_config.preprocessor_obj_file_path,
