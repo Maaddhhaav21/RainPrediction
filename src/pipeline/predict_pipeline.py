@@ -64,9 +64,12 @@ class CustomData:
                 "Cloud Cover": [float(self.cloud_cover)],
                 "Pressure": [float(self.pressure)],
             }
-            
+
             return pd.DataFrame(custom_data_input_dict)
 
         except Exception as e:
-            print("ERROR IN PREDICTION PIPELINE:", e)
+            import traceback
+            print("==== REAL ERROR START ====")
+            traceback.print_exc()
+            print("==== REAL ERROR END ====")
             raise e
