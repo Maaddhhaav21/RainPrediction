@@ -12,8 +12,9 @@ class PredictPipeline:
 
     def predict(self, features):
         try:
-            model_path = os.path.join(os.getcwd(), "artifacts", "model.pkl")
-            preprocessor_path = os.path.join(os.getcwd(), "artifacts", "preprocessor.pkl")
+            base_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+            model_path = os.path.join(base_dir, "artifacts", "model.pkl")
+            preprocessor_path = os.path.join(base_dir, "artifacts", "preprocessor.pkl")
             print("Input Features:")
             print(features)
 
