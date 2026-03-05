@@ -264,13 +264,3 @@ Prediction:
 # 👨‍💻 Author
 
 **Madhav Manoj**
-
-Machine Learning & AI Developer
-
-GitHub: https://github.com/yourusername
-
----
-
-# ⭐ If you like this project
-
-Give it a **star ⭐ on GitHub** to support the project!
