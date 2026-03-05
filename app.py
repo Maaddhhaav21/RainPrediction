@@ -1,4 +1,3 @@
-import os
 from flask import Flask, render_template, request
 from src.pipeline.predict_pipeline import CustomData, PredictPipeline
 
@@ -31,6 +30,7 @@ def predict_datapoint():
         )
 
         pred_df = data.get_data_as_dataframe()
+
         print("Input Features:")
         print(pred_df)
 
@@ -41,6 +41,7 @@ def predict_datapoint():
         print("Prediction type:", type(result[0]))
 
         prediction = "🌧 Rain Expected" if int(result[0]) == 1 else "☀ No Rain Expected"
+
         return render_template(
             'home.html',
             results=prediction
@@ -48,5 +49,4 @@ def predict_datapoint():
 
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port)
+    app.run(debug=True)
