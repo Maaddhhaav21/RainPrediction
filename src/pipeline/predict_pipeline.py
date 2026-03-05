@@ -13,6 +13,8 @@ class PredictPipeline:
         try:
             model_path = "artifacts/model.pkl"
             preprocessor_path = "artifacts/preprocessor.pkl"
+            print("Input Features:")
+            print(features)
 
             model = load_object(file_path=model_path)
             preprocessor = load_object(file_path=preprocessor_path)
@@ -53,12 +55,12 @@ class CustomData:
 
             custom_data_input_dict = {
                 "location": [self.location],
-                "temperature": [self.temperature],
-                "humidity": [self.humidity],
-                "wind_speed": [self.wind_speed],
-                "precipitation": [self.precipitation],
-                "cloud_cover": [self.cloud_cover],
-                "pressure": [self.pressure],
+                "temperature": [float(self.temperature)],
+                "humidity": [float(self.humidity)],
+                "wind_speed": [float(self.wind_speed)],
+                "precipitation": [float(self.precipitation)],
+                "cloud_cover": [float(self.cloud_cover)],
+                "pressure": [float(self.pressure)],
             }
 
             return pd.DataFrame(custom_data_input_dict)

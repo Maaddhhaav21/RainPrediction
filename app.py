@@ -34,8 +34,10 @@ def predict_datapoint():
         predict_pipeline = PredictPipeline()
         result = predict_pipeline.predict(pred_df)
 
-        prediction = "🌧 Rain Expected" if result[0] == 1 else "☀ No Rain Expected"
+        print("Raw model prediction:", result)
+        print("Prediction type:", type(result[0]))
 
+        prediction = "🌧 Rain Expected" if int(result[0]) == 1 else "☀ No Rain Expected"
         return render_template(
             'home.html',
             results=prediction
