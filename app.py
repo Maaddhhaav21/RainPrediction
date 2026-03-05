@@ -34,19 +34,22 @@ def predict_datapoint():
         print("Input Features:")
         print(pred_df)
 
-        predict_pipeline = PredictPipeline()
-        result = predict_pipeline.predict(pred_df)
+        try:
+            predict_pipeline = PredictPipeline()
+            result = predict_pipeline.predict(pred_df)
 
-        print("Raw model prediction:", result)
-        print("Prediction type:", type(result[0]))
+            print("Prediction:", result)
 
-        prediction = "🌧 Rain Expected" if int(result[0]) == 1 else "☀ No Rain Expected"
+            prediction = "🌧 Rain Expected" if int(result[0]) == 1 else "☀ No Rain Expected"
 
-        return render_template(
-            'home.html',
-            results=prediction
-        )
+            return render_template("home.html", results=prediction)
 
+        except Exception as e:
+            import traceback
+            print("======= FLASK ERROR =======")
+            traceback.print_exc()
+            print("======= END ERROR =======")
+            return render_template("home.html", results="Server Error")
 
 if __name__ == "__main__":
     app.run(debug=True)
