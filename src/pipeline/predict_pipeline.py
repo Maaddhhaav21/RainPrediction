@@ -13,13 +13,18 @@ class PredictPipeline:
     def predict(self, features):
         try:
             base_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+
             model_path = os.path.join(base_dir, "artifacts", "model.pkl")
             preprocessor_path = os.path.join(base_dir, "artifacts", "preprocessor.pkl")
+
             print("Input Features:")
             print(features)
 
             model = load_object(file_path=model_path)
             preprocessor = load_object(file_path=preprocessor_path)
+
+            # ensure categorical column type
+            features["Location"] = features["Location"].astype(str)
 
             data_scaled = preprocessor.transform(features)
 
@@ -28,7 +33,9 @@ class PredictPipeline:
             return preds
 
         except Exception as e:
-            raise CustomException(e, sys)
+            import traceback
+            traceback.print_exc()
+            raise e
 
 
 class CustomData:
