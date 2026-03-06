@@ -24,7 +24,7 @@ class PredictPipeline:
             preprocessor = load_object(file_path=preprocessor_path)
 
             # ensure categorical column type
-            features["Location"] = features["Location"].astype(str)
+            features["location"] = features["location"].astype(str)
 
             data_scaled = preprocessor.transform(features)
 
