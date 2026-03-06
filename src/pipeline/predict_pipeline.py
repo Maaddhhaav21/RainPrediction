@@ -62,13 +62,13 @@ class CustomData:
     def get_data_as_dataframe(self):
         try:
             custom_data_input_dict = {
-                "Location": [self.location],
-                "Temperature": [float(self.temperature)],
-                "Humidity": [float(self.humidity)],
-                "Wind_Speed": [float(self.wind_speed)],
-                "Precipitation": [float(self.precipitation)],
-                "Cloud_Cover": [float(self.cloud_cover)],
-                "Pressure": [float(self.pressure)],
+                "location": [self.location],
+                "temperature": [float(self.temperature)],
+                "humidity": [float(self.humidity)],
+                "wind_speed": [float(self.wind_speed)],
+                "precipitation": [float(self.precipitation)],
+                "cloud_cover": [float(self.cloud_cover)],
+                "pressure": [float(self.pressure)],
             }
 
             return pd.DataFrame(custom_data_input_dict)
