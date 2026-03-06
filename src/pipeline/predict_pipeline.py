@@ -1,7 +1,7 @@
 import sys
 import pandas as pd
 import os
-
+import traceback
 from src.exception import CustomException
 from src.utils import load_object
 
@@ -32,8 +32,9 @@ class PredictPipeline:
 
             return preds
 
+
         except Exception as e:
-            import traceback
+            print("ERROR OCCURRED:")
             traceback.print_exc()
             raise e
 
@@ -59,24 +60,20 @@ class CustomData:
         self.pressure = pressure
 
     def get_data_as_dataframe(self):
-
         try:
-
             custom_data_input_dict = {
                 "Location": [self.location],
                 "Temperature": [float(self.temperature)],
                 "Humidity": [float(self.humidity)],
-                "Wind Speed": [float(self.wind_speed)],
+                "Wind_Speed": [float(self.wind_speed)],
                 "Precipitation": [float(self.precipitation)],
-                "Cloud Cover": [float(self.cloud_cover)],
+                "Cloud_Cover": [float(self.cloud_cover)],
                 "Pressure": [float(self.pressure)],
             }
 
             return pd.DataFrame(custom_data_input_dict)
 
         except Exception as e:
-            import traceback
-            print("==== REAL ERROR START ====")
+            print("ERROR OCCURRED:")
             traceback.print_exc()
-            print("==== REAL ERROR END ====")
             raise e
